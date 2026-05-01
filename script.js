@@ -2,56 +2,69 @@ let but = document.querySelector(".but");
 let inb = document.querySelector(".input");
 let ul = document.querySelector("ul");
 
-// 1. دالة لحفظ البيانات في المتصفح
+// 1. دالة حفظ البيانات في المتصفح
 function saveData() {
-    localStorage.setItem("tasks", ul.innerHTML);
+    localStorage.setItem("myTodoList", ul.innerHTML);
 }
 
-// 2. دالة لجلب البيانات عند فتح الصفحة
+// 2. دالة عرض البيانات عند فتح الصفحة
 function showData() {
-    ul.innerHTML = localStorage.getItem("tasks");
-    
-    // بعد ما نرجع الكود، لازم نرجع "نشغل" الزراير تاني لأنها رجعت كـ نص فقط
-    attachEvents();
+    let savedTasks = localStorage.getItem("myTodoList");
+    if (savedTasks) {
+        ul.innerHTML = savedTasks;
+        attachEvents(); // إعادة تشغيل الزراير للمهام اللي رجعت
+    }
 }
 
-// 3. دالة لإعادة ربط الأحداث (الأزرار) بالوظائف بتاعتها
+// 3. دالة ربط الأوامر بالزراير (عشان لما تعمل Refresh الزراير تشتغل)
 function attachEvents() {
-    let listItems = ul.querySelectorAll("li");
-    listItems.forEach(li => {
+    let allItems = ul.querySelectorAll("li");
+    
+    allItems.forEach((li) => {
         let span = li.querySelector("span");
         let completeBtn = li.querySelector(".complete");
         let deleteBtn = li.querySelector(".deleteBtn");
         let editBtn = li.querySelector(".buttow");
 
-        deleteBtn.onclick = function() {
+        // زرار الحذف
+        deleteBtn.onclick = function () {
             li.remove();
-            saveData(); // حفظ بعد المسح
+            saveData();
         };
 
-        completeBtn.onclick = function() {
+        // زرار الاكتمال
+        completeBtn.onclick = function () {
             span.style.cssText = `
                 text-decoration: line-through;
                 color: rgb(99, 98, 98);
                 font-size: 14px;
                 transition: 0.6s;
             `;
-            saveData(); // حفظ بعد الاكتمال
+            saveData();
         };
 
-        editBtn.onclick = function() {
+        // زرار التعديل (اللي كان مزعلك يا عم!)
+        editBtn.onclick = function () {
             let newText = prompt("عدل المهمه!", span.textContent);
-            if (newText && newText.trim() !== "") {
+            if (newText !== null && newText.trim() !== "") {
                 span.textContent = newText;
-                saveData(); // حفظ بعد التعديل
+                
+                // الأسطر اللي طلبتها عشان ترجع الاستايل لأصله
+                span.style.textDecoration = "none";
+                span.style.color = "black";
+                span.style.fontSize = "18px";
+                
+                saveData(); // حفظ التعديل الجديد
             }
         };
     });
 }
 
+// إضافة مهمة جديدة
 but.addEventListener("click", function () {
     if (inb.value.trim() !== "") {
         let li = document.createElement("li");
+        
         let span = document.createElement("span");
         span.textContent = inb.value;
         li.appendChild(span);
@@ -62,33 +75,34 @@ but.addEventListener("click", function () {
         complete.classList.add("complete");
         li.appendChild(complete);
 
-        // زرار حذف
+        // زرار الحذف
         let deleteBtn = document.createElement("button");
         deleteBtn.textContent = "×";
         deleteBtn.classList.add("deleteBtn");
         li.appendChild(deleteBtn);
 
-        // زرار تعديل
+        // زرار التعديل
         let editBtn = document.createElement("button");
         editBtn.classList.add("buttow");
-        editBtn.textContent = "تعديل";
+        editBtn.textContent = "تعديل المهام";
         li.appendChild(editBtn);
 
         ul.appendChild(li);
         inb.value = "";
-        
-        saveData(); // حفظ البيانات الجديدة
-        attachEvents(); // تشغيل الزراير للمهمة الجديدة
+
+        saveData();      // حفظ في LocalStorage
+        attachEvents();  // تشغيل الأكشنز على المهمة الجديدة
     } else {
         alert("اكتب مهمة الأول! 📝");
     }
 });
 
+// دعم زرار Enter
 inb.addEventListener("keypress", function (e) {
     if (e.key === "Enter") {
         but.click();
     }
 });
 
-// تشغيل جلب البيانات أول ما الصفحة تفتح
+// تشغيل جلب البيانات أول ما تفتح الصفحة
 showData();

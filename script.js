@@ -29,7 +29,15 @@ but.addEventListener("click", function () {
     });
 
     complete.addEventListener("click", function () {
-      span.classList.toggle("completed");
+      span.style.cssText = `
+      
+        text-decoration: line-through;
+  color: rgb(99, 98, 98);
+  font-size: 14px;
+
+      transition: 0.6s;
+
+      `;
     });
   } else {
     alert("اكتب مهمة الأول! 📝");

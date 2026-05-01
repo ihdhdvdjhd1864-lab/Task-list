@@ -11,17 +11,20 @@ but.addEventListener("click", function () {
     ul.appendChild(li);
     span.textContent = inb.value;
     inb.value = "";
+    
 
     // مكتمل المهام
     let complete = document.createElement("button");
     complete.textContent = "✓";
     complete.classList.add("complete");
+ 
     li.appendChild(complete);
 
     // حذف المهام
     let deleteBtn = document.createElement("button");
     deleteBtn.textContent = "×";
     deleteBtn.classList.add("deleteBtn");
+
     li.appendChild(deleteBtn);
 
     deleteBtn.addEventListener("click", function () {
@@ -50,3 +53,4 @@ inb.addEventListener("keypress", function (e) {
     but.click();
   }
 });
+
